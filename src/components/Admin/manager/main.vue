@@ -103,6 +103,7 @@
         <span class="hidden-sm-and-down">{{chekedStatus}}</span>
       </v-toolbar-title-->
       <v-spacer />
+      {{dataPerson.data[0].name}}. Статус - {{status}}
       <v-btn icon>
         <v-icon>mdi-apps</v-icon>
       </v-btn>

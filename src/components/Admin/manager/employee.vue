@@ -103,6 +103,7 @@
           <span class="hidden-sm-and-down">{{chekedStatus}}</span>
         </v-toolbar-title-->
         <v-spacer />
+        {{dataPerson.data[0].name}}. Статус - {{status}}
         <v-btn icon>
           <v-icon>mdi-apps</v-icon>
         </v-btn>
@@ -284,7 +285,7 @@
     </v-app>
   </template>
 
-  <script>
+<script>
     export default {
       props: {
         source: String,
@@ -373,6 +374,12 @@
           { icon: 'mdi-keyboard', text: 'Go to the old version' },
         ],
       }),
+    computed: {
+      status: function() {
+        if(this.dataPerson.data[0].status == "manager")
+          return "Менеджер"
+      }
+    },
       methods: {
         exit() {
           this.$router.push('/login');

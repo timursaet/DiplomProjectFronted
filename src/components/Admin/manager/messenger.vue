@@ -103,6 +103,7 @@
         <span class="hidden-sm-and-down">{{chekedStatus}}</span>
       </v-toolbar-title-->
       <v-spacer />
+      {{dataPerson.data[0].name}}. Статус - {{status}}
       <v-btn icon>
         <v-icon>mdi-apps</v-icon>
       </v-btn>
@@ -114,10 +115,55 @@
             </v-btn>
     </v-app-bar>
     <!-- -->
-    <h1>Отправить сообщение</h1>
+    <!-- <h1>Отправить сообщение</h1> -->
      <v-form>
     <v-container>
-      <v-row>
+        <v-card max-width="300">
+    <v-toolbar color="deep-purple accent-4" dark>
+      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      <v-toolbar-title>Пользователи</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon>
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+    </v-toolbar>
+    <v-list subheader>
+      <v-subheader>Выбирите пользователя</v-subheader>
+      <v-list-item
+        v-for="item in dataPerson.data"
+        :key="item.title"
+        @click="sendMessagePerson(item)"
+      >
+        <v-list-item-avatar>
+          <v-img :src="item.avatar"></v-img>
+        </v-list-item-avatar>
+
+        <v-list-item-content>
+          <v-list-item-title v-text="item.name"></v-list-item-title>
+        </v-list-item-content>
+
+        <v-list-item-icon>
+          <v-icon :color="item.active ? 'deep-purple accent-4' : 'grey'">mdi-chat</v-icon>
+        </v-list-item-icon>
+      </v-list-item>
+    </v-list>
+
+    <v-divider></v-divider>
+  </v-card>
+  <v-col cols="12" sm="6" align-self="center">
+        <v-textarea
+      label="Мои сообщения"
+      no-resize
+      rows="4"
+      :value="myMessage || messagePerson.data[0].messengerMessage"
+      readonly
+    ></v-textarea> </v-col>
+       <v-btn
+            text
+            color="primary"
+            @click="clearMyMessage(messagePerson.data[0]._id)"
+          >Очистить диалог</v-btn>
+      <!-- <v-row>
         <v-col cols="12" sm="6">
           <v-text-field
             v-model="myMessage"
@@ -126,7 +172,7 @@
             shaped
           ></v-text-field>
         </v-col>
-      </v-row>
+      </v-row> -->
        <v-row>
         <v-col cols="6">
           <v-text-field
@@ -137,7 +183,7 @@
             filled
             clear-icon="mdi-close-circle"
             clearable
-            label="Message"
+            label="Написать сообщение"
             type="text"
             @click:append="toggleMarker"
             @click:append-outer="sendMessage"
@@ -262,6 +308,8 @@
         'mdi-emoticon-tongue',
       ],
       dataPerson: {},
+      id: '',
+      messagePerson: {},
       dataNewPerson: {
         login: "",
         password: "",
@@ -311,10 +359,17 @@
       icon () {
         return this.icons[this.iconIndex]
       },
+      status: function() {
+        if(this.dataPerson.data[0].status == "manager")
+          return "Менеджер";
+    },
     },
     methods: {
       exit() {
         this.$router.push('/login');
+      },
+      sendMessagePerson(item) {
+        this.id = item._id;
       },
       toggleMarker () {
         this.marker = !this.marker
@@ -324,12 +379,19 @@
       },
       sendMessage () {
         this.resetIcon();
-        //console.log(this.message)
-        io('http://localhost:3000').emit('send mess', this.message);
+        this.myMessage+ this.message
+        io('http://localhost:3000').emit('send mess', {message: this.message, id: this.id});
         this.clearMessage()
       },
       resetIcon () {
         this.iconIndex = 0
+      },
+      clearMyMessage(id) {
+        let idPerson = id;
+        this.myMessage = '';
+        this.$http.post('http://localhost:3000/editMssengerMessage', {
+                    id: idPerson
+                })  
       },
       changeIcon () {
         this.iconIndex === this.icons.length - 1
@@ -338,10 +400,32 @@
       },
     },
     mounted() {
+        this.$http.get('http://localhost:3000/employee')
+                      .then(response => {
+                        this.dataPerson = response.data
+                      })
+                      .catch(function (error) {
+                          console.error(error);
+                      });
+
+        this.$http.get('http://localhost:3000/admin', {
+                      headers: {
+                          'Authorization': 'Bearer '+localStorage.getItem('token')
+                      }
+                  })
+                      .then(response => {
+                        this.messagePerson = response.data
+                        //this.dataPerson = response.data
+                      })
+                      .catch(function (error) {
+                          console.error(error);
+                      })
+
       const socket = io('http://localhost:3000').connect;
       io('http://localhost:3000').on('add mess', (data) => {
         this.myMessage = this.myMessage + '\n' + data.msg;
-      }) 
+      })
+
     },
   }
 </script>

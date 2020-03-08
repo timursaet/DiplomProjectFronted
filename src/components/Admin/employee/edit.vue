@@ -97,6 +97,7 @@
         class="hidden-sm-and-down"
       />
       <v-spacer />
+      {{dataPerson.data[0].name}}. Статус - {{status}}
       <v-btn icon>
         <v-icon>mdi-apps</v-icon>
       </v-btn>
@@ -276,6 +277,12 @@
         { icon: 'mdi-keyboard', text: 'Go to the old version' },
       ],
     }),
+    computed: {
+      status: function() {
+        if(this.dataPerson.data[0].status == "employee")
+          return "Соотрудник"
+      },
+    },
     methods: {
       save() {
             this.$http.post('http://localhost:3000/edit', {

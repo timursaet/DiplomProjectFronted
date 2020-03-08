@@ -97,6 +97,7 @@
         class="hidden-sm-and-down"
       />
       <v-spacer />
+      {{dataPerson.data[0].name}}. Статус - {{status}}
       <v-btn icon>
         <v-icon>mdi-apps</v-icon>
       </v-btn>
@@ -237,9 +238,6 @@
         age: "",
         status: "",
       },
-      // dataEdition: {
-      //   name: dataPerson.data[0].name
-      // },
       items: [
         { icon: 'mdi-home', text: 'Главная', to: '/manager/admin' },
         { icon: 'mdi-pen', text: 'Редактировать профиль', to: '/manager/edit' },
@@ -274,6 +272,12 @@
         { icon: 'mdi-keyboard', text: 'Go to the old version' },
       ],
     }),
+    computed: {
+      status: function() {
+        if(this.dataPerson.data[0].status == "manager")
+          return "Менеджер"
+      }
+    },
     methods: {
       save() {
             this.$http.post('http://localhost:3000/edit', {
@@ -306,7 +310,6 @@
                     status: this.dataNewPerson.status
                 })
                     .then(response => {
-                        //  this.$router.push('/admin');
                     })
                     .catch(function (error) { 
                         console.error(error);
