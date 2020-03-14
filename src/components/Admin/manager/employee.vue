@@ -96,12 +96,6 @@
           label="Search"
           class="hidden-sm-and-down"
         />
-            <!--v-toolbar-title
-          style="width: 300px"
-          class="ml-0 pl-4"
-        >
-          <span class="hidden-sm-and-down">{{chekedStatus}}</span>
-        </v-toolbar-title-->
         <v-spacer />
         {{dataPerson.data[0].name}}. Статус - {{status}}
         <v-btn icon>
@@ -141,14 +135,6 @@
         </v-toolbar>
       </template>
       <template v-slot:item.action="{item}">
-        <!-- -->
-           <!-- <v-icon
-          small
-          class="mr-2"
-          v-on="pp"
-        >
-          mdi-plus
-        </v-icon> -->
  <v-dialog
       v-model="dialog2"
       width="800px"
@@ -309,7 +295,6 @@
       },
         dialog: false,
         headers: [
-          //{ text: 'id', value: '_id' },
           {
             text: 'Фамилия',
             align: 'start',
@@ -324,28 +309,13 @@
           { text: 'Поручения', value: 'task' },
           { text: 'Действии', value: 'action', sortable: false },
         ],
-        // desserts: [],
-        // editedIndex: -1,
-        // editedItem: {
-        //   name: '',
-        //   calories: 0,
-        //   fat: 0,
-        //   carbs: 0,
-        //   protein: 0,
-        // },
-        // defaultItem: {
-        //   name: '',
-        //   calories: 0,
-        //   fat: 0,
-        //   carbs: 0,
-        //   protein: 0,
-        // },
         items: [
           { icon: 'mdi-home', text: 'Главная', to: '/manager/admin' },
           { icon: 'mdi-pen', text: 'Редактировать профиль', to: '/manager/edit' },
           { icon: 'mdi-account-circle', text: 'Сотрудники компании', to: '/manager/employee'},
           { icon: 'mdi-content-copy', text: 'Задачи', to: '/manager/task' },
           { icon: 'mdi-message', text: 'Открыть мессенджер', to: '/manager/messenger'},
+         { icon: 'mdi-cellphone-link', text: 'Файловая система', to: '/manager/fileSystem' },
           {
             icon: 'mdi-chevron-up',
             'icon-alt': 'mdi-chevron-down',
@@ -370,7 +340,6 @@
           },
           { icon: 'mdi-settings', text: 'Settings' },
           { icon: 'mdi-help-circle', text: 'Help' },
-          { icon: 'mdi-cellphone-link', text: 'App downloads' },
           { icon: 'mdi-keyboard', text: 'Go to the old version' },
         ],
       }),
@@ -390,7 +359,6 @@
                     task: this.dataNewPerson.task
                 })
                     .then(response => {
-                        //  this.$router.push('/admin');
                     })
                     .catch(function (error) { 
                         console.error(error);
@@ -401,13 +369,6 @@
          this.$http.post('http://localhost:3000/delete', {
                     id: item._id
                 })
-                    .then(response => {
-                        //  this.$router.push('/admin');
-                    })
-                    .catch(function (error) { 
-                        console.error(error);
-                        
-                    })
       },
       add() {
         this.$http.post('http://localhost:3000/add', {
@@ -421,22 +382,12 @@
                     password: this.dataNewPerson.password,
                     status: this.dataNewPerson.status
                 })
-                    .then(response => {
-                        //  this.$router.push('/admin');
-                    })
-                    .catch(function (error) { 
-                        console.error(error);
-                        
-                    })
       }
       },
       mounted() {
                   this.$http.get('http://localhost:3000/employee')
                       .then(response => {
                         this.dataPerson = response.data
-                      })
-                      .catch(function (error) {
-                          console.error(error);
                       })
           },
     }

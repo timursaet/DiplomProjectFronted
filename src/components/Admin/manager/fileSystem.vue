@@ -104,35 +104,26 @@
       <v-btn icon>
         <v-icon>mdi-bell</v-icon>
       </v-btn>
-            <v-btn color="error" fab x-small dark to="/">
+            <v-btn color="error" fab x-small dark @click="exit()">
               <v-icon>mdi-account-circle</v-icon>
             </v-btn>
-    </v-app-bar>
-     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="10">
-          <v-card class="elevation-12">
-                    <v-toolbar color="red" dark flat >
-                        <v-toolbar-title>Редактировать профиль</v-toolbar-title>
-                        <div class="flex-grow-1"></div>
-                    </v-toolbar>
-                    <v-card-text>
-                        <v-form>
-                            <v-text-field label="Имя" name="name" type="text" v-model="dataPerson.data[0].name"></v-text-field>
-                            <v-text-field label="Фамилия" name="lastname" type="text" v-model="dataPerson.data[0].lastname"></v-text-field>
-                            <v-text-field label="Возраст" name="age" type="text" v-model="dataPerson.data[0].age"></v-text-field>
-                            <v-text-field label="Электронная почта" name="email" type="text" v-model="dataPerson.data[0].email"></v-text-field>
-                            <v-text-field label="Организация" name="company" type="text" v-model="dataPerson.data[0].company"></v-text-field>
-                            <v-text-field label="Номер телефона" name="phone" type="text" v-model="dataPerson.data[0].phone"></v-text-field>
-                        </v-form>
-                    </v-card-text>
-                    <v-card-actions>
-                        <div class="flex-grow-1"></div>
-                        <v-btn color="red" @click="save()">Сохранить изменения</v-btn>
-                    </v-card-actions>
-            </v-card>
-        </v-col>
-      </v-row>
+    </v-app-bar>    
+    
     <v-content>
+      <v-toolbar-title>Файловая система компании</v-toolbar-title><br>
+         <ul>
+          <li v-for="item in fileSystem.data" style="list-style-type: none">
+            {{item}}
+          <v-icon @click="downloadFiles(item)">mdi-download</v-icon>
+          <v-icon @click="deleteFiles(item)">mdi-delete</v-icon>
+          </li>
+        </ul><br>
+            <v-form id="formElem" action="/upload" method="post" enctype="multipart/form-data">
+                Загрузить файл<br>
+                <input type="file" name="filedata"><br><br>
+                <v-btn @click="submitFile()">Отправить</v-btn>
+            </v-form>
+            
       <v-container>
       </v-container>
     </v-content>
@@ -219,6 +210,7 @@
 </template>
 
 <script>
+
   export default {
     props: {
       source: String,
@@ -227,7 +219,8 @@
       dialog: false,
       drawer: null,
       dataPerson: {},
-       dataNewPerson: {
+      fileSystem: {},
+      dataNewPerson: {
         login: "",
         password: "",
         name: "",
@@ -236,7 +229,7 @@
         company: "",
         phone: "",
         age: "",
-        status: "",
+        status: ""
       },
       items: [
         { icon: 'mdi-home', text: 'Главная', to: '/manager/admin' },
@@ -279,23 +272,9 @@
       }
     },
     methods: {
-      save() {
-            this.$http.post('http://localhost:3000/edit', {
-                    id: this.dataPerson.data[0]._id,
-                    username: this.dataPerson.data[0].name,
-                    lastname: this.dataPerson.data[0].lastname,
-                    age: this.dataPerson.data[0].age,
-                    email: this.dataPerson.data[0].email,
-                    company: this.dataPerson.data[0].company,
-                    phone: this.dataPerson.data[0].phone
-                })
-                    .then(response => { 
-                    })
-                    .catch(function (error) { 
-                        console.error(error);
-                        
-                    })
-      },
+      exit() {
+        this.$router.push('/login');
+      },    
       add() {
         this.$http.post('http://localhost:3000/add', {
                     username: this.dataNewPerson.name,
@@ -308,27 +287,39 @@
                     password: this.dataNewPerson.password,
                     status: this.dataNewPerson.status
                 })
-                    .then(response => {
+      }, 
+        submitFile() {
+               let response = fetch('http://localhost:3000/upload', {
+                    method: 'POST',
+                    body: new FormData(formElem)
+                });
+        },
+        downloadFiles(item) {
+                this.$http.get('http://localhost:3000/uploads/'+item)
+                    .then(response => { 
+                      document.location.href = response.config.url;
                     })
-                    .catch(function (error) { 
-                        console.error(error);
-                        
-                    })
-      }
+        },
+        deleteFiles(item) {
+                 this.$http.post('http://localhost:3000/deleteFiles/', {
+                    delete: item
+                 })
+        }
     },
     mounted() {
                 this.$http.get('http://localhost:3000/admin', {
                     headers: {
-                        'Authorization': 'Bearer '+localStorage.getItem('token')
+                          'Authorization': 'Bearer '+localStorage.getItem('token')
                     }
                 })
                     .then(response => {
-                      console.log(response.data)
                        this.dataPerson = response.data
+                    }),
+                this.$http.get('http://localhost:3000/downloadFiles')
+                    .then(response => {
+                       this.fileSystem = response.data;
+                       console.log(this.fileSystem)
                     })
-                    .catch(function (error) {
-                        console.error(error);
-                    })
-        }
-  }
-</script>
+        },
+    }
+  </script> 

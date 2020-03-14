@@ -96,12 +96,6 @@
         label="Search"
         class="hidden-sm-and-down"
       />
-          <!--v-toolbar-title
-        style="width: 300px"
-        class="ml-0 pl-4"
-      >
-        <span class="hidden-sm-and-down">{{chekedStatus}}</span>
-      </v-toolbar-title-->
       <v-spacer />
       {{dataPerson.data[0].name}}. Статус - {{status}}
       <v-btn icon>
@@ -246,6 +240,7 @@
         { icon: 'mdi-account-circle', text: 'Сотрудники компании', to: '/manager/employee'},
         { icon: 'mdi-content-copy', text: 'Задачи', to: '/manager/task' },
         { icon: 'mdi-message', text: 'Открыть мессенджер', to: '/manager/messenger'},
+        { icon: 'mdi-cellphone-link', text: 'Файловая система', to: '/manager/fileSystem' },
         {
           icon: 'mdi-chevron-up',
           'icon-alt': 'mdi-chevron-down',
@@ -270,7 +265,6 @@
         },
         { icon: 'mdi-settings', text: 'Settings' },
         { icon: 'mdi-help-circle', text: 'Help' },
-        { icon: 'mdi-cellphone-link', text: 'App downloads' },
         { icon: 'mdi-keyboard', text: 'Go to the old version' },
       ],
     }),
@@ -297,7 +291,6 @@
                     status: this.dataNewPerson.status
                 })
                     .then(response => {
-                        //  this.$router.push('/admin');
                     })
                     .catch(function (error) { 
                         console.error(error);

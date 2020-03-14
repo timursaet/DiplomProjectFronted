@@ -88,6 +88,13 @@ const routes = [
       return import('../components/Admin/manager/messenger.vue')
     }
   },
+  {
+    path: '/manager/fileSystem',
+    name: 'fileSystem',
+    component: function () {
+      return import('../components/Admin/manager/fileSystem.vue')
+    }
+  },
 ]
 
 const router = new VueRouter({

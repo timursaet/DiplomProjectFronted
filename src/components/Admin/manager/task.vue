@@ -259,6 +259,7 @@
         { icon: 'mdi-account-circle', text: 'Сотрудники компании', to: '/manager/employee'},
         { icon: 'mdi-content-copy', text: 'Задачи', to: '/manager/task'},
         { icon: 'mdi-message', text: 'Открыть мессенджер', to: '/manager/messenger'},
+        { icon: 'mdi-cellphone-link', text: 'Файловая система', to: '/manager/fileSystem' },
         {
           icon: 'mdi-chevron-up',
           'icon-alt': 'mdi-chevron-down',
@@ -283,7 +284,6 @@
         },
         { icon: 'mdi-settings', text: 'Settings' },
         { icon: 'mdi-help-circle', text: 'Help' },
-        { icon: 'mdi-cellphone-link', text: 'App downloads' },
         { icon: 'mdi-keyboard', text: 'Go to the old version' },
       ],
       todos: [

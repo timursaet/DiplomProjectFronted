@@ -3,8 +3,13 @@ import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify';
 import Axios from 'axios'
+import VueFetch from 'vue-fetch'
 
 Vue.prototype.$http = Axios;
+ 
+Vue.use(VueFetch, {
+  polyfill: true   //should vue-fetch load promise polyfill, set to false to use customer polyfill
+});
 
 Vue.config.productionTip = false
 
