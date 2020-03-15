@@ -249,6 +249,7 @@
         { icon: 'mdi-pen', text: 'Редактировать профиль', to: '/employee/edit' },
         { icon: 'mdi-content-copy', text: 'Задачи', to: '/employee/task'},
          { icon: 'mdi-message', text: 'Открыть мессенджер', to: '/employee/messenger'},
+        { icon: 'mdi-cellphone-link', text: 'Файловая система', to: '/employee/fileSystem' },
         {
           icon: 'mdi-chevron-up',
           'icon-alt': 'mdi-chevron-down',

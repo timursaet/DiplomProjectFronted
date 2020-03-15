@@ -95,6 +95,13 @@ const routes = [
       return import('../components/Admin/manager/fileSystem.vue')
     }
   },
+  {
+    path: '/employee/fileSystem',
+    name: 'fileSystem',
+    component: function () {
+      return import('../components/Admin/employee/fileSystem.vue')
+    }
+  },
 ]
 
 const router = new VueRouter({

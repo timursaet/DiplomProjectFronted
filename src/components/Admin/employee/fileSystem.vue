@@ -96,14 +96,8 @@
         label="Search"
         class="hidden-sm-and-down"
       />
-          <!--v-toolbar-title
-        style="width: 300px"
-        class="ml-0 pl-4"
-      >
-        <span class="hidden-sm-and-down">{{chekedStatus}}</span>
-      </v-toolbar-title-->
       <v-spacer />
-      {{messagePerson.data[0].name}}. Статус - {{status}}
+      {{dataPerson.data[0].name}}. Статус - {{status}}
       <v-btn icon>
         <v-icon>mdi-apps</v-icon>
       </v-btn>
@@ -113,93 +107,89 @@
             <v-btn color="error" fab x-small dark @click="exit()">
               <v-icon>mdi-account-circle</v-icon>
             </v-btn>
-    </v-app-bar>
-    <!-- -->
-    <!-- <h1>Отправить сообщение</h1> -->
-     <v-form>
-    <v-container>
-        <v-card max-width="300">
-    <v-toolbar color="deep-purple accent-4" dark>
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      <v-toolbar-title>Пользователи</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <v-list subheader>
-      <v-subheader>Выбирите пользователя</v-subheader>
-      <v-list-item
-        v-for="item in dataPerson.data"
-        :key="item.title"
-        @click="sendMessagePerson(item)"
-      >
-        <v-list-item-avatar>
-          <v-img :src="item.avatar"></v-img>
-        </v-list-item-avatar>
+    </v-app-bar>    
+    <template>
+      <h1 align='center'>Файловая система компании</h1>
+  <v-simple-table dense>
+    <template v-slot:default>
+      <thead>
+        <tr>
+          <th class="text-left">Название файла</th>
+          <th class="text-left">Переименовать файл</th>
+          <th class="text-left">Действии с файлом</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in fileSystem.data" :key="item.name">
+          <td>{{ item }} <v-icon @click="viewFiles(item)">mdi-note</v-icon></td>
+          <td>
+            <input v-model="newFileName" style="border:1px solid blue">
+            <v-icon @click="renameFile(item)">mdi-pen</v-icon>
+          </td>
+          <td>
+            <v-icon @click="downloadFiles(item)">mdi-download</v-icon>
+            <v-icon @click="deleteFiles(item)">mdi-delete</v-icon>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+  </v-simple-table>
+    </template>
+        <v-content>
+            <v-row justify="left">
+    <v-btn
+      color="primary"
+      dark
+      @click="dialog = true"
+    >
+      Загрузить файл
+    </v-btn>
+      <v-dialog
+      v-model="dialog"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">Загрузить файл</v-card-title>
+        <v-card-text>
+          Здесь можете загрузить в файловую систему компании
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-form id="formElem" action="/upload" method="post" enctype="multipart/form-data">
+                Загрузить файл<br>
+                <input type="file" name="filedata"><br><br>
+                <v-btn @click="submitFile()">Отправить</v-btn>
+            </v-form> 
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+            </v-row>
 
-        <v-list-item-content>
-          <v-list-item-title v-text="item.name"></v-list-item-title>
-        </v-list-item-content>
-
-        <v-list-item-icon>
-          <v-icon :color="item.active ? 'deep-purple accent-4' : 'grey'">mdi-chat</v-icon>
-        </v-list-item-icon>
-      </v-list-item>
-    </v-list>
-
-    <v-divider></v-divider>
-  </v-card>
-  <v-col cols="12" sm="6" align-self="center">
-        <v-textarea
-      label="Мои сообщения"
-      no-resize
-      rows="4"
-      :value="myMessage || messagePerson.data[0].messengerMessage"
-      readonly
-    ></v-textarea> </v-col>
-       <v-btn
-            text
-            color="primary"
-            @click="clearMyMessage(messagePerson.data[0]._id)"
-          >Очистить диалог</v-btn>
-      <!-- <v-row>
-        <v-col cols="12" sm="6">
-          <v-text-field
-            v-model="myMessage"
-            label="Мои сообщения"
-            outlined
-            shaped
-          ></v-text-field>
-        </v-col>
-      </v-row> -->
-       <v-row>
-        <v-col cols="6">
-          <v-text-field
-            v-model="message"
-            :append-icon="marker ? 'mdi-map-marker' : 'mdi-map-marker-off'"
-            :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
-            :prepend-icon="icon"
-            filled
-            clear-icon="mdi-close-circle"
-            clearable
-            label="Написать сообщение"
-            type="text"
-            @click:append="toggleMarker"
-            @click:append-outer="sendMessage"
-            @click:prepend="changeIcon"
-            @click:clear="clearMessage"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-form>
-    <!-- -->
-    <v-content>
+ <!-- <v-form id="formElem" action="/upload" method="post" enctype="multipart/form-data">
+                Загрузить файл<br>
+                <input type="file" name="filedata"><br><br>
+                <v-btn @click="submitFile()">Отправить</v-btn>
+            </v-form> -->
+                  <!-- <v-toolbar-title>Файловая система компании</v-toolbar-title><br>
+         <ul>
+          <li v-for="item in fileSystem.data" style="list-style-type: none">
+            <v-icon>mdi-file</v-icon>
+            {{item}}
+          <v-icon @click="downloadFiles(item)">mdi-download</v-icon>
+          <v-icon>mdi-pen</v-icon>
+          <v-icon @click="deleteFiles(item)">mdi-delete</v-icon>
+          </li>
+        </ul><br>
+            <v-form id="formElem" action="/upload" method="post" enctype="multipart/form-data">
+                Загрузить файл<br>
+                <input type="file" name="filedata"><br><br>
+                <v-btn @click="submitFile()">Отправить</v-btn>
+            </v-form>
+             -->
       <v-container>
       </v-container>
     </v-content>
-    <v-btn
+    <!-- <v-btn
       bottom
       color="pink"
       dark
@@ -277,13 +267,11 @@
           >Добавить соотрудника</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
   </v-app>
 </template>
-
 <script>
-  import VueSocketIOExt from 'vue-socket.io-extended';
-  import io from 'socket.io-client';
+
   export default {
     props: {
       source: String,
@@ -291,25 +279,10 @@
     data: () => ({
       dialog: false,
       drawer: null,
-      password: 'Password',
-      show: false,
-      myMessage: '',
-      message: '',
-      marker: true,
-      iconIndex: 0,
-      icons: [
-        'mdi-emoticon',
-        'mdi-emoticon-cool',
-        'mdi-emoticon-dead',
-        'mdi-emoticon-excited',
-        'mdi-emoticon-happy',
-        'mdi-emoticon-neutral',
-        'mdi-emoticon-sad',
-        'mdi-emoticon-tongue',
-      ],
       dataPerson: {},
-      id: '',
-      messagePerson: {},
+      newFileName: '',
+      fileSystem: {},
+      viewFiless: '',
       dataNewPerson: {
         login: "",
         password: "",
@@ -351,81 +324,75 @@
         },
         { icon: 'mdi-settings', text: 'Settings' },
         { icon: 'mdi-help-circle', text: 'Help' },
-        { icon: 'mdi-cellphone-link', text: 'App downloads' },
         { icon: 'mdi-keyboard', text: 'Go to the old version' },
       ],
     }),
-     computed: {
-      icon () {
-        return this.icons[this.iconIndex]
-      },
+    computed: {
       status: function() {
-        if(this.messagePerson.data[0].status == "employee")
-          return "Соотрудник"
-    },
+        if(this.dataPerson.data[0].status == "manager")
+          return "Менеджер"
+      }
     },
     methods: {
       exit() {
         this.$router.push('/login');
-      },
-      sendMessagePerson(item) {
-        this.id = item._id;
-      },
-      toggleMarker () {
-        this.marker = !this.marker
-      },
-      clearMessage () {
-        this.message = ''
-      },
-      sendMessage () {
-        this.resetIcon();
-        this.myMessage+ this.message
-        io('http://localhost:3000').emit('send mess', {message: this.message, id: this.id});
-        this.clearMessage()
-      },
-      resetIcon () {
-        this.iconIndex = 0
-      },
-      clearMyMessage(id) {
-        let idPerson = id;
-        this.myMessage = '';
-        this.$http.post('http://localhost:3000/editMssengerMessage', {
-                    id: idPerson
-                })  
-      },
-      changeIcon () {
-        this.iconIndex === this.icons.length - 1
-          ? this.iconIndex = 0
-          : this.iconIndex++
-      },
+      },    
+      add() {
+        this.$http.post('http://localhost:3000/add', {
+                    username: this.dataNewPerson.name,
+                    lastname: this.dataNewPerson.lastname,
+                    age: this.dataNewPerson.age,
+                    email: this.dataNewPerson.email,
+                    company: this.dataNewPerson.company,
+                    phone: this.dataNewPerson.phone,
+                    login: this.dataNewPerson.login,
+                    password: this.dataNewPerson.password,
+                    status: this.dataNewPerson.status
+                })
+      }, 
+        submitFile() {
+               let response = fetch('http://localhost:3000/upload', {
+                    method: 'POST',
+                    body: new FormData(formElem)
+                });
+        },
+        downloadFiles(item) {
+                this.$http.get('http://localhost:3000/uploads/'+item)
+                    .then(response => { 
+                      document.location.href = response.config.url;
+                    })
+        },
+        deleteFiles(item) {
+                 this.$http.post('http://localhost:3000/deleteFiles/', {
+                    delete: item
+                 })
+        },
+        renameFile(item) {
+                 this.$http.post('http://localhost:3000/renameFiles/', {
+                    originalNameFiles: item,
+                    newFileName: this.newFileName
+                 })
+        },
+        viewFiles(item) {
+                 this.$http.get('http://localhost:3000/viewFiles/'+item)
+                    .then(response => {
+                        this.viewFiless = response.data
+                    })
+        }
     },
     mounted() {
-        this.$http.get('http://localhost:3000/employee')
-                      .then(response => {
-                        this.dataPerson = response.data
-                      })
-                      .catch(function (error) {
-                          console.error(error);
-                      });
-
-        this.$http.get('http://localhost:3000/admin', {
-                      headers: {
+                this.$http.get('http://localhost:3000/admin', {
+                    headers: {
                           'Authorization': 'Bearer '+localStorage.getItem('token')
-                      }
-                  })
-                      .then(response => {
-                        this.messagePerson = response.data
-                        //this.dataPerson = response.data
-                      })
-                      .catch(function (error) {
-                          console.error(error);
-                      })
-
-      const socket = io('http://localhost:3000').connect;
-      io('http://localhost:3000').on('add mess', (data) => {
-        this.myMessage = this.myMessage + '\n' + data.msg;
-      })
-
-    },
-  }
-</script>
+                    }
+                })
+                    .then(response => {
+                       this.dataPerson = response.data
+                    }),
+                this.$http.get('http://localhost:3000/downloadFiles')
+                    .then(response => {
+                       this.fileSystem = response.data;
+                    })
+        },
+    }
+  </script> 

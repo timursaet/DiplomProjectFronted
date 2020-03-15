@@ -108,13 +108,75 @@
               <v-icon>mdi-account-circle</v-icon>
             </v-btn>
     </v-app-bar>    
-    
-    <v-content>
-      <v-toolbar-title>Файловая система компании</v-toolbar-title><br>
+    <template>
+      <h1 align='center'>Файловая система компании</h1>
+  <v-simple-table dense>
+    <template v-slot:default>
+      <thead>
+        <tr>
+          <th class="text-left">Название файла</th>
+          <th class="text-left">Переименовать файл</th>
+          <th class="text-left">Действии с файлом</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in fileSystem.data" :key="item.name">
+          <td>{{ item }} <v-icon @click="viewFiles(item)">mdi-note</v-icon></td>
+          <td>
+            <input v-model="newFileName" style="border:1px solid blue">
+            <v-icon @click="renameFile(item)">mdi-pen</v-icon>
+          </td>
+          <td>
+            <v-icon @click="downloadFiles(item)">mdi-download</v-icon>
+            <v-icon @click="deleteFiles(item)">mdi-delete</v-icon>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+  </v-simple-table>
+    </template>
+        <v-content>
+            <v-row justify="left">
+    <v-btn
+      color="primary"
+      dark
+      @click="dialog = true"
+    >
+      Загрузить файл
+    </v-btn>
+      <v-dialog
+      v-model="dialog"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">Загрузить файл</v-card-title>
+        <v-card-text>
+          Здесь можете загрузить в файловую систему компании
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-form id="formElem" action="/upload" method="post" enctype="multipart/form-data">
+                Загрузить файл<br>
+                <input type="file" name="filedata"><br><br>
+                <v-btn @click="submitFile()">Отправить</v-btn>
+            </v-form> 
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+            </v-row>
+
+ <!-- <v-form id="formElem" action="/upload" method="post" enctype="multipart/form-data">
+                Загрузить файл<br>
+                <input type="file" name="filedata"><br><br>
+                <v-btn @click="submitFile()">Отправить</v-btn>
+            </v-form> -->
+                  <!-- <v-toolbar-title>Файловая система компании</v-toolbar-title><br>
          <ul>
           <li v-for="item in fileSystem.data" style="list-style-type: none">
+            <v-icon>mdi-file</v-icon>
             {{item}}
           <v-icon @click="downloadFiles(item)">mdi-download</v-icon>
+          <v-icon>mdi-pen</v-icon>
           <v-icon @click="deleteFiles(item)">mdi-delete</v-icon>
           </li>
         </ul><br>
@@ -123,11 +185,11 @@
                 <input type="file" name="filedata"><br><br>
                 <v-btn @click="submitFile()">Отправить</v-btn>
             </v-form>
-            
+             -->
       <v-container>
       </v-container>
     </v-content>
-    <v-btn
+    <!-- <v-btn
       bottom
       color="pink"
       dark
@@ -205,10 +267,9 @@
           >Добавить соотрудника</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
   </v-app>
 </template>
-
 <script>
 
   export default {
@@ -219,7 +280,9 @@
       dialog: false,
       drawer: null,
       dataPerson: {},
+      newFileName: '',
       fileSystem: {},
+      viewFiless: '',
       dataNewPerson: {
         login: "",
         password: "",
@@ -304,6 +367,18 @@
                  this.$http.post('http://localhost:3000/deleteFiles/', {
                     delete: item
                  })
+        },
+        renameFile(item) {
+                 this.$http.post('http://localhost:3000/renameFiles/', {
+                    originalNameFiles: item,
+                    newFileName: this.newFileName
+                 })
+        },
+        viewFiles(item) {
+                 this.$http.get('http://localhost:3000/viewFiles/'+item)
+                    .then(response => {
+                        this.viewFiless = response.data
+                    })
         }
     },
     mounted() {
@@ -318,7 +393,6 @@
                 this.$http.get('http://localhost:3000/downloadFiles')
                     .then(response => {
                        this.fileSystem = response.data;
-                       console.log(this.fileSystem)
                     })
         },
     }
