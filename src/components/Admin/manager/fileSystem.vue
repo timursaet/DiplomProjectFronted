@@ -164,7 +164,6 @@
       </v-card>
     </v-dialog>
             </v-row>
-
  <!-- <v-form id="formElem" action="/upload" method="post" enctype="multipart/form-data">
                 Загрузить файл<br>
                 <input type="file" name="filedata"><br><br>
